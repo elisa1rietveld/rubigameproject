@@ -1,30 +1,31 @@
 using UnityEngine;
-using UnityEngine.UI;  
+using UnityEngine.UI;
 using System.Collections;
 
 public class EnemyInteraction : MonoBehaviour
 {
-    public Slider slider;              
-    public Sprite badEnemySprite;      
-    public Sprite changedEnemySprite; 
-    private SpriteRenderer enemyRenderer;  
+    public Slider slider;
+    public Sprite badEnemySprite;
+    public Sprite changedEnemySprite;
+    private SpriteRenderer enemyRenderer;
     private bool isInteracting = false;
 
-    
-    public float interactionRange = 2f;  
-    private bool playerInRange = false;  
+    public float interactionRange = 2f;
+    private bool playerInRange = false;
+    private EnemyMovement enemyMovement;
 
     void Start()
     {
         enemyRenderer = GetComponent<SpriteRenderer>();
-        
+        enemyMovement = GetComponent<EnemyMovement>();
+
         if (enemyRenderer == null)
         {
             Debug.LogError("No SpriteRenderer found on the enemy GameObject!");
             return;
         }
-        
-        enemyRenderer.sprite = badEnemySprite;  
+
+        enemyRenderer.sprite = badEnemySprite;
     }
 
     void Update()
@@ -40,41 +41,47 @@ public class EnemyInteraction : MonoBehaviour
 
     IEnumerator StartSliderInteraction()
     {
-        slider.gameObject.SetActive(true); 
+        slider.gameObject.SetActive(true);
         slider.value = 0;
 
-      
         isInteracting = true;
 
         float timePassed = 0;
         while (timePassed < 5f)
         {
             timePassed += Time.deltaTime;
-            slider.value = timePassed / 5f; 
+            slider.value = timePassed / 5f;
 
-            yield return null;  
+            yield return null;
         }
 
         enemyRenderer.sprite = changedEnemySprite;
         slider.gameObject.SetActive(false);
         isInteracting = false;
-    }
 
-   
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Player"))  
+        if (enemyMovement != null)
         {
-            playerInRange = true;  
+            enemyMovement.StopFollowingPlayer();
         }
     }
 
-    
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            playerInRange = true;
+            if (enemyMovement != null)
+            {
+                enemyMovement.StartFollowingPlayer();
+            }
+        }
+    }
+
     void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))  
+        if (other.CompareTag("Player"))
         {
-            playerInRange = false;  
+            playerInRange = false;
         }
     }
 }
