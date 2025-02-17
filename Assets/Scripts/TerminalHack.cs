@@ -5,17 +5,17 @@ using UnityEngine.UI;
 
 public class TerminalHack : MonoBehaviour
 {
-    public Slider hackSlider; // Reference to your hacking slider
-    public static bool isHacking = false; // Track if hacking is active
-    private bool isHackingInProgress = false; // Track if hacking is in progress
-    private float hackProgress = 0f; // Track progress of hacking
-    public GameObject enemy; // Reference to the enemy object
-    public Sprite hackedSprite; // Sprite to show when enemy is hacked
-    public Sprite originalSprite; // Original sprite of the enemy
-    public float hackRange = 2f; // Range to interact with the terminal
-    private Transform player; // Reference to the player
-    private bool isEnemyFrozen = false; // To check if the enemy is frozen
-    private float freezeTimer = 0f; // Timer to keep track of the 5 seconds freeze
+    public Slider hackSlider; 
+    public static bool isHacking = false; 
+    private bool isHackingInProgress = false; 
+    private float hackProgress = 0f; 
+    public GameObject enemy; 
+    public Sprite hackedSprite; 
+    public Sprite originalSprite; 
+    public float hackRange = 2f; 
+    private Transform player; 
+    private bool isEnemyFrozen = false; 
+    private float freezeTimer = 0f; 
 
     void Start()
     {
@@ -26,10 +26,10 @@ public class TerminalHack : MonoBehaviour
     {
         if (isHackingInProgress)
         {
-            hackProgress += Time.deltaTime / 5f; // Adjust this to control the hack speed
+            hackProgress += Time.deltaTime / 5f; 
             hackSlider.value = hackProgress;
 
-            if (hackProgress >= 1f) // When the hacking is complete
+            if (hackProgress >= 1f) 
             {
                 CompleteHack();
             }
@@ -39,50 +39,49 @@ public class TerminalHack : MonoBehaviour
         {
             freezeTimer += Time.deltaTime;
 
-            if (freezeTimer >= 5f) // 5 seconds freeze duration
+            if (freezeTimer >= 5f) 
             {
-                RestoreEnemy(); // Restore enemy after 5 seconds
+                RestoreEnemy(); 
             }
         }
 
-        // Check if the player is within range to interact with the terminal and if "E" is pressed
         if (Vector3.Distance(player.position, transform.position) <= hackRange && !isHackingInProgress)
         {
-            if (Input.GetKeyDown(KeyCode.E)) // Only press "E" when near the terminal
+            if (Input.GetKeyDown(KeyCode.E)) 
             {
                 StartHack();
             }
         }
     }
 
-    // Start the hacking process
+    
     void StartHack()
     {
         isHackingInProgress = true;
-        hackSlider.gameObject.SetActive(true); // Show the slider
-        hackProgress = 0f; // Reset progress
+        hackSlider.gameObject.SetActive(true); 
+        hackProgress = 0f; 
     }
 
-    // When hacking is complete, freeze the enemy and change its sprite
+    
     void CompleteHack()
     {
-        hackSlider.gameObject.SetActive(false); // Hide the slider
+        hackSlider.gameObject.SetActive(false); 
         isHacking = true;
         isHackingInProgress = false;
-        isEnemyFrozen = true; // Freeze the enemy
-        enemy.GetComponent<SpriteRenderer>().sprite = hackedSprite; // Change sprite to hacked one
-        enemy.GetComponent<EnemyMovement>().FreezeEnemy(); // Freeze enemy movement
-        freezeTimer = 0f; // Reset the freeze timer
+        isEnemyFrozen = true; 
+        enemy.GetComponent<SpriteRenderer>().sprite = hackedSprite; 
+        enemy.GetComponent<EnemyMovement>().FreezeEnemy(); 
+        freezeTimer = 0f; 
         Debug.Log("Terminal Hacked! Enemy frozen for 5 seconds.");
     }
 
-    // Restore the enemy (after the 5 seconds)
+   
     void RestoreEnemy()
     {
         isEnemyFrozen = false;
-        enemy.GetComponent<SpriteRenderer>().sprite = originalSprite; // Revert the sprite to the original
-        enemy.GetComponent<EnemyMovement>().UnfreezeEnemy(); // Unfreeze the enemy movement
-        freezeTimer = 0f; // Reset the freeze timer
+        enemy.GetComponent<SpriteRenderer>().sprite = originalSprite; 
+        enemy.GetComponent<EnemyMovement>().UnfreezeEnemy(); 
+        freezeTimer = 0f; 
         Debug.Log("Enemy restored.");
     }
 }

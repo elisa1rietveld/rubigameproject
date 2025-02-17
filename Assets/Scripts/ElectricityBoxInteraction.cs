@@ -35,6 +35,13 @@ public class ElectricityBoxInteraction : MonoBehaviour
                 CompleteHack();
             }
         }
+        if (Vector3.Distance(player.position, transform.position) <= hackRange && !isHackingInProgress)
+        {
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                StartHack();
+            }
+        }
     }
 
     private void OnTriggerStay2D(Collider2D other)
