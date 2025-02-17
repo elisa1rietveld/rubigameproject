@@ -1169,6 +1169,7 @@ GameObject:
   - component: {fileID: 1232404954}
   - component: {fileID: 1232404953}
   - component: {fileID: 1232404952}
+  - component: {fileID: 1232404958}
   - component: {fileID: 1232404955}
   - component: {fileID: 1232404956}
   - component: {fileID: 1232404957}
@@ -1354,6 +1355,23 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1232404958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1232404951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88e60a793d3f2214194c8df442d4b05f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletPrefab: {fileID: 4632145392235692686, guid: 3aa9101bac646b34da50c0e007a883d1, type: 3}
+  shootPoint: {fileID: 1232404954}
+  shootRate: 0.5
+  maxBullets: 10
+  bulletCountText: {fileID: 1421163530}
 --- !u!1 &1421163528
 GameObject:
   m_ObjectHideFlags: 0

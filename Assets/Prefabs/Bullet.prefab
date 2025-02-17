@@ -95,7 +95,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4632145392235692686}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -126,8 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06f4de7afe054bf40a4bc6d8252bca2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletSpeed: 10
-  hackedSprite: {fileID: -42367578683302009, guid: 73b4db2642f7fa54fa5687ed0da97867, type: 3}
+  speed: 10
 --- !u!58 &4112401638294344051
 CircleCollider2D:
   m_ObjectHideFlags: 0

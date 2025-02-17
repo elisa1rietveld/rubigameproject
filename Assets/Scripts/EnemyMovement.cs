@@ -14,7 +14,7 @@ public class EnemyMovement : MonoBehaviour
     private float timer;
     private bool isFollowingPlayer = false;
     private SpriteRenderer spriteRenderer;
-    private bool isFrozen = false; // Flag to track if the enemy is frozen
+    private bool isFrozen = false;
 
     private void Start()
     {
@@ -30,13 +30,11 @@ public class EnemyMovement : MonoBehaviour
 
     private void Update()
     {
-        // If the enemy is frozen, don't allow it to move
         if (isFrozen)
         {
             return;
         }
 
-        // If the enemy is following the player, update the target position
         if (spriteRenderer.sprite == firstSprite)
         {
             if (isFollowingPlayer)
@@ -49,10 +47,8 @@ public class EnemyMovement : MonoBehaviour
             isFollowingPlayer = false;
         }
 
-        // Move towards the target position
         transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
 
-        // Change direction or set a new target when the current target is reached
         if (Vector3.Distance(transform.position, targetPosition) < 0.1f)
         {
             if (!isFollowingPlayer)
@@ -80,7 +76,7 @@ public class EnemyMovement : MonoBehaviour
 
     public void StartFollowingPlayer()
     {
-        if (spriteRenderer.sprite == firstSprite) 
+        if (spriteRenderer.sprite == firstSprite)
         {
             isFollowingPlayer = true;
         }
@@ -95,18 +91,34 @@ public class EnemyMovement : MonoBehaviour
     public void ChangeToSecondSprite()
     {
         spriteRenderer.sprite = secondSprite;
-        StopFollowingPlayer(); 
+        StopFollowingPlayer();
     }
 
-    // Method to freeze the enemy
     public void FreezeEnemy()
     {
-        isFrozen = true; // Set the freeze flag
+        isFrozen = true;
+        ChangeToSecondSprite();
+        StartCoroutine(UnfreezeAfterDelay(3f)); 
     }
 
-    // Method to restore the enemy (unfreeze it)
+    private IEnumerator UnfreezeAfterDelay(float freezeTime)
+    {
+        yield return new WaitForSeconds(freezeTime);
+        UnfreezeEnemy(); 
+    }
+
     public void UnfreezeEnemy()
     {
-        isFrozen = false; // Reset the freeze flag
+        isFrozen = false; 
+        spriteRenderer.sprite = firstSprite; 
+        SetRandomTargetPosition(); 
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Bullet"))
+        {
+            FreezeEnemy(); 
+        }
     }
 }
