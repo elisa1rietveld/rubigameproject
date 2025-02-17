@@ -1277,6 +1277,7 @@ GameObject:
   - component: {fileID: 2064314106}
   - component: {fileID: 2064314105}
   - component: {fileID: 2064314104}
+  - component: {fileID: 2064314107}
   m_Layer: 0
   m_Name: HidingSpot
   m_TagString: HidingSpot
@@ -1396,6 +1397,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1330726170}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2064314107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2064314103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 889f2e953d3e3a54ba1b5031660233e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2082124457
 GameObject:
   m_ObjectHideFlags: 0
