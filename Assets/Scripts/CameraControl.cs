@@ -36,4 +36,4 @@ public class CameraControl : MonoBehaviour
             Debug.Log("Camera is deactivated.");
         }
     }
-}
+}   
