@@ -96,29 +96,55 @@ public class EnemyMovement : MonoBehaviour
 
     public void FreezeEnemy()
     {
+        // Log to see if it's being called
+        Debug.Log("FreezeEnemy method called!");
+
         isFrozen = true;
-        ChangeToSecondSprite();
-        StartCoroutine(UnfreezeAfterDelay(3f)); 
+        ChangeToSecondSprite();  // Assumes this method is to change sprite or freeze visual
+        StartCoroutine(UnfreezeAfterDelay(3f));  // Optional: unfreeze after some time
     }
+
 
     private IEnumerator UnfreezeAfterDelay(float freezeTime)
     {
         yield return new WaitForSeconds(freezeTime);
-        UnfreezeEnemy(); 
+        UnfreezeEnemy();
     }
 
     public void UnfreezeEnemy()
     {
-        isFrozen = false; 
-        spriteRenderer.sprite = firstSprite; 
-        SetRandomTargetPosition(); 
+        isFrozen = false;
+        spriteRenderer.sprite = firstSprite;
+        SetRandomTargetPosition();
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Bullet"))
+        // Log the object the bullet collided with
+        Debug.Log("Bullet collided with: " + collision.gameObject.name);
+
+        if (collision.gameObject.CompareTag("Enemy"))
         {
-            FreezeEnemy(); 
+            // Log when the bullet hits an enemy
+            Debug.Log("Bullet hit the enemy!");
+
+            // Try to get the enemy's movement script and call FreezeEnemy
+            EnemyMovement enemy = collision.gameObject.GetComponent<EnemyMovement>();
+            if (enemy != null)
+            {
+                Debug.Log("Freezing enemy...");
+                enemy.FreezeEnemy();  // Freeze the enemy
+            }
+            else
+            {
+                // Log an error if the enemy does not have the EnemyMovement script
+                Debug.LogError("EnemyMovement script not found on the enemy!");
+            }
+
+            // Destroy the bullet after it hits the enemy
+            Destroy(gameObject);
         }
     }
+
 }
+
