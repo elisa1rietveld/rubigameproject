@@ -560,7 +560,7 @@ MonoBehaviour:
   changeDirectionTime: 2
   player: {fileID: 1232404954}
   firstSprite: {fileID: 6103156093619518413, guid: 4a060a03bc7d0d9418b168faca103c01, type: 3}
-  secondSprite: {fileID: -7448706964176616940, guid: 4a060a03bc7d0d9418b168faca103c01, type: 3}
+  secondSprite: {fileID: -42367578683302009, guid: 73b4db2642f7fa54fa5687ed0da97867, type: 3}
 --- !u!95 &690099306
 Animator:
   serializedVersion: 5
@@ -1194,7 +1194,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 4
   animator: {fileID: 1232404957}
-  spriteRenderer: {fileID: 0}
+  spriteRenderer: {fileID: 1232404953}
 --- !u!212 &1232404953
 SpriteRenderer:
   m_ObjectHideFlags: 0
