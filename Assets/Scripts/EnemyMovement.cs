@@ -20,34 +20,31 @@ public class EnemyMovement : MonoBehaviour
     {
         if (player == null)
         {
-            Debug.LogError("Player transform is not assigned!");
+            player = GameObject.FindGameObjectWithTag("Player").transform;
         }
 
         spriteRenderer = GetComponent<SpriteRenderer>();
 
+        isFollowingPlayer = true; // Force follow mode for debugging
         SetRandomTargetPosition();
     }
+
 
     private void Update()
     {
         if (isFrozen)
         {
+            Debug.Log("Enemy is frozen, skipping movement.");
             return;
         }
 
-        if (spriteRenderer.sprite == firstSprite)
+        if (isFollowingPlayer)
         {
-            if (isFollowingPlayer)
-            {
-                targetPosition = player.position;
-            }
-        }
-        else if (spriteRenderer.sprite == secondSprite)
-        {
-            isFollowingPlayer = false;
+            Debug.Log("Enemy is following player: " + player.position);
         }
 
         transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+
 
         if (Vector3.Distance(transform.position, targetPosition) < 0.1f)
         {

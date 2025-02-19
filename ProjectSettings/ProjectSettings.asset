@@ -820,8 +820,8 @@ PlayerSettings:
   apiCompatibilityLevelPerPlatform: {}
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: R.U.B.I Gameproject
-  metroPackageVersion: 
+  metroPackageName: R.U.B.IGameproject
+  metroPackageVersion: 1.0.0.0
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
@@ -829,7 +829,7 @@ PlayerSettings:
   metroCertificateNotAfter: 0000000000000000
   metroApplicationDescription: R.U.B.I Gameproject
   wsaImages: {}
-  metroTileShortName: 
+  metroTileShortName: R.U.B.I Gameproject
   metroTileShowName: 0
   metroMediumTileShowName: 0
   metroLargeTileShowName: 0
