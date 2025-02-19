@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 
-public class SceneTransition : MonoBehaviour
+public class SceneTransition2 : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D collider)
     {
@@ -14,7 +14,7 @@ public class SceneTransition : MonoBehaviour
         if (collider.CompareTag("Player"))
         {
             Debug.Log("Player triggered! Transitioning to next scene.");
-            SceneManager.LoadScene("DemoScene");
+            SceneManager.LoadScene("RensScene");
         }
     }
 }
