@@ -1,72 +1,76 @@
-using System.Collections;
 using UnityEngine;
+using System.Collections;
 
 public class EnemyPatrol : MonoBehaviour
 {
-    public Transform[] patrolPoints;  // Waypoints for patrolling
-    public float patrolSpeed = 2f;    // Speed while patrolling
-    public float chaseSpeed = 4f;     // Speed while chasing
-    private int currentPointIndex = 0;
-    private bool isChasing = false;
+    public Transform[] patrolPoints;
+    public float speed = 90f;
+    private int currentPointIndex;
 
-    private Transform player;
-    private Detector playerDetector;
-    private Rigidbody2D rb; // Rigidbody for smooth movement
+    public Transform player;
+    public float detectionRadius = 300f;
+    private bool isChasing;
+    private bool isWaiting;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();  // Get enemy Rigidbody
-        player = GameObject.FindGameObjectWithTag("Player")?.transform;
-
-        if (player != null)
-        {
-            playerDetector = player.GetComponent<Detector>();
-        }
-        else
-        {
-            Debug.LogError("Player not found! Make sure your player has the 'Player' tag.");
-        }
-
-        StartCoroutine(Patrol());
+        currentPointIndex = 0;
+        transform.position = patrolPoints[currentPointIndex].position;
     }
 
     void Update()
     {
-        if (playerDetector != null && playerDetector.isSeen)
+        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+
+        if (distanceToPlayer <= detectionRadius)
         {
             isChasing = true;
-            StopAllCoroutines(); // Stop patrol when chasing
         }
-    }
-
-    IEnumerator Patrol()
-    {
-        while (!isChasing)
+        else
         {
-            Transform targetPoint = patrolPoints[currentPointIndex];
-
-            while (Vector2.Distance(transform.position, targetPoint.position) > 0.1f)
-            {
-                MoveTowards(targetPoint.position, patrolSpeed);
-                yield return null;
-            }
-
-            yield return new WaitForSeconds(2f); // Wait at patrol point
-            currentPointIndex = (currentPointIndex + 1) % patrolPoints.Length; // Loop waypoints
+            isChasing = false;
         }
-    }
 
-    void MoveTowards(Vector2 target, float speed)
-    {
-        Vector2 direction = (target - (Vector2)transform.position).normalized;
-        rb.velocity = direction * speed; // Move using Rigidbody2D
-    }
-
-    void FixedUpdate()
-    {
-        if (isChasing && player != null)
+        if (isChasing)
         {
-            MoveTowards(player.position, chaseSpeed);
+            StopAllCoroutines();
+            isWaiting = false;
+            FollowPlayer();
         }
+        else if (!isWaiting)
+        {
+            Patrol();
+        }
+    }
+
+    void Patrol()
+    {
+        if (Vector2.Distance(transform.position, patrolPoints[currentPointIndex].position) < 0.1f)
+        {
+            StartCoroutine(WaitAtWaypoint());
+        }
+        else
+        {
+            transform.position = Vector2.MoveTowards(transform.position, patrolPoints[currentPointIndex].position, speed * Time.deltaTime);
+        }
+    }
+
+    IEnumerator WaitAtWaypoint()
+    {
+        isWaiting = true;
+        yield return new WaitForSeconds(1f);
+        currentPointIndex = (currentPointIndex + 1) % patrolPoints.Length;
+        isWaiting = false;
+    }
+
+    void FollowPlayer()
+    {
+        transform.position = Vector2.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, detectionRadius);
     }
 }
