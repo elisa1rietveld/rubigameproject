@@ -5,11 +5,11 @@ using UnityEngine;
 public class PlayerHiding : MonoBehaviour
 {
     private bool isHidden = false;
-    private List<EnemyMovement> enemiesInScene = new List<EnemyMovement>();
+    private List<EnemyPatrol> enemiesInScene = new List<EnemyPatrol>();
 
     void Start()
     {
-        EnemyMovement[] enemies = FindObjectsOfType<EnemyMovement>();
+        EnemyPatrol[] enemies = FindObjectsOfType<EnemyPatrol>();
         foreach (var enemy in enemies)
         {
             enemiesInScene.Add(enemy);
@@ -22,6 +22,7 @@ public class PlayerHiding : MonoBehaviour
         {
             isHidden = true;
             UpdateEnemyDetection();
+            ChangeOpacity(other.gameObject, 0.5f); // Reduce opacity to 50%
         }
     }
 
@@ -31,6 +32,7 @@ public class PlayerHiding : MonoBehaviour
         {
             isHidden = false;
             UpdateEnemyDetection();
+            ChangeOpacity(other.gameObject, 1f); // Restore full opacity
         }
     }
 
@@ -38,10 +40,19 @@ public class PlayerHiding : MonoBehaviour
     {
         foreach (var enemy in enemiesInScene)
         {
-            if (isHidden)
-                enemy.StopFollowingPlayer();
-            else
-                enemy.StartFollowingPlayer();
+            enemy.SetPlayerHidden(isHidden);  // This updates playerIsHidden inside the enemy
+        }
+    }
+
+
+    void ChangeOpacity(GameObject hidingSpot, float alpha)
+    {
+        SpriteRenderer renderer = hidingSpot.GetComponent<SpriteRenderer>();
+        if (renderer != null)
+        {
+            Color color = renderer.color;
+            color.a = alpha;
+            renderer.color = color;
         }
     }
 }
