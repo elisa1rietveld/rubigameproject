@@ -9,15 +9,16 @@ public class EnemyInteraction : MonoBehaviour
     public Sprite changedEnemySprite;
     private SpriteRenderer enemyRenderer;
     private bool isInteracting = false;
-
     public float interactionRange = 2f;
     private bool playerInRange = false;
     private EnemyMovement enemyMovement;
+    private Animator enemyAnimator;
 
     void Start()
     {
         enemyRenderer = GetComponent<SpriteRenderer>();
         enemyMovement = GetComponent<EnemyMovement>();
+        enemyAnimator = GetComponent<Animator>();
 
         if (enemyRenderer == null)
         {
@@ -34,6 +35,7 @@ public class EnemyInteraction : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.E))
             {
+                enemyAnimator.SetTrigger("IsInteracting");
                 StartCoroutine(StartSliderInteraction());
             }
         }
@@ -43,7 +45,6 @@ public class EnemyInteraction : MonoBehaviour
     {
         slider.gameObject.SetActive(true);
         slider.value = 0;
-
         isInteracting = true;
 
         float timePassed = 0;
@@ -51,18 +52,12 @@ public class EnemyInteraction : MonoBehaviour
         {
             timePassed += Time.deltaTime;
             slider.value = timePassed / 5f;
-
             yield return null;
         }
 
         enemyRenderer.sprite = changedEnemySprite;
         slider.gameObject.SetActive(false);
         isInteracting = false;
-
-        if (enemyMovement != null)
-        {
-            enemyMovement.StopFollowingPlayer();
-        }
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -70,10 +65,6 @@ public class EnemyInteraction : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerInRange = true;
-            if (enemyMovement != null)
-            {
-                enemyMovement.StartFollowingPlayer();
-            }
         }
     }
 

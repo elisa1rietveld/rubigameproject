@@ -1,26 +1,44 @@
-using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class EnemyPatrol : MonoBehaviour
 {
-    public Transform[] patrolPoints;
-    public float speed = 90f;
-    private int currentPointIndex;
 
+    public float moveSpeed = 2f;
     public Transform player;
+    public Sprite firstSprite;
+    public Sprite secondSprite;
+    public Transform[] patrolPoints;
+    public float patrolSpeed = 90f;
     public float detectionRadius = 300f;
+    
+    private int currentPatrolPointIndex;
+    private SpriteRenderer spriteRenderer;
+    private bool isFrozen = false;
     private bool isChasing;
     private bool playerIsHidden;
     private bool isWaiting;
 
-    void Start()
+    private void Start()
     {
-        currentPointIndex = 0;
-        transform.position = patrolPoints[currentPointIndex].position;
+        if (player == null)
+        {
+            player = GameObject.FindGameObjectWithTag("Player").transform;
+        }
+
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        currentPatrolPointIndex = 0;
+        transform.position = patrolPoints[currentPatrolPointIndex].position;
     }
 
-    void Update()
+    private void Update()
     {
+        if (isFrozen)
+        {
+            return;
+        }
+
         if (playerIsHidden)
         {
             isChasing = false;
@@ -53,13 +71,13 @@ public class EnemyPatrol : MonoBehaviour
 
     void Patrol()
     {
-        if (Vector2.Distance(transform.position, patrolPoints[currentPointIndex].position) < 0.1f)
+        if (Vector2.Distance(transform.position, patrolPoints[currentPatrolPointIndex].position) < 0.1f)
         {
             StartCoroutine(WaitAtWaypoint());
         }
         else
         {
-            transform.position = Vector2.MoveTowards(transform.position, patrolPoints[currentPointIndex].position, speed * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(transform.position, patrolPoints[currentPatrolPointIndex].position, patrolSpeed * Time.deltaTime);
         }
     }
 
@@ -67,8 +85,61 @@ public class EnemyPatrol : MonoBehaviour
     {
         isWaiting = true;
         yield return new WaitForSeconds(1f);
-        currentPointIndex = (currentPointIndex + 1) % patrolPoints.Length;
+        currentPatrolPointIndex = (currentPatrolPointIndex + 1) % patrolPoints.Length;
         isWaiting = false;
+    }
+
+    void FollowPlayer()
+    {
+        transform.position = Vector2.MoveTowards(transform.position, player.position, patrolSpeed * Time.deltaTime);
+    }
+
+    public void FreezeEnemy()
+    {
+        isFrozen = true;
+        ChangeToSecondSprite();
+        StartCoroutine(UnfreezeAfterDelay(3f));
+    }
+
+    private IEnumerator UnfreezeAfterDelay(float freezeTime)
+    {
+        yield return new WaitForSeconds(freezeTime);
+        UnfreezeEnemy();
+    }
+
+    public void UnfreezeEnemy()
+    {
+        isFrozen = false;
+        spriteRenderer.sprite = firstSprite;
+    }
+
+    public void ChangeToSecondSprite()
+    {
+        spriteRenderer.sprite = secondSprite;
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            EnemyPatrol enemy = collision.gameObject.GetComponent<EnemyPatrol>();
+            if (enemy != null)
+            {
+                enemy.FreezeEnemy();
+            }
+
+            Destroy(gameObject);
+        }
+    }
+
+    // Control visibility of player for chasing logic
+    public void SetPlayerHidden(bool hidden)
+    {
+        playerIsHidden = hidden;
+        if (hidden)
+        {
+            isChasing = false;
+        }
     }
 
     public void StopFollowingPlayer()
@@ -82,20 +153,6 @@ public class EnemyPatrol : MonoBehaviour
         {
             isChasing = true;
         }
-    }
-
-    public void SetPlayerHidden(bool hidden)
-    {
-        playerIsHidden = hidden;
-        if (hidden)
-        {
-            isChasing = false;
-        }
-    }
-
-    void FollowPlayer()
-    {
-        transform.position = Vector2.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
     }
 
     void OnDrawGizmosSelected()

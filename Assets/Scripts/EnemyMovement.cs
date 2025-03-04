@@ -5,14 +5,10 @@ using UnityEngine;
 public class EnemyMovement : MonoBehaviour
 {
     public float moveSpeed = 2f;
-    public float changeDirectionTime = 2f;
     public Transform player;
     public Sprite firstSprite;
     public Sprite secondSprite;
 
-    private Vector3 targetPosition;
-    private float timer;
-    private bool isFollowingPlayer = false;
     private SpriteRenderer spriteRenderer;
     private bool isFrozen = false;
 
@@ -24,8 +20,7 @@ public class EnemyMovement : MonoBehaviour
         }
 
         spriteRenderer = GetComponent<SpriteRenderer>();
-        isFollowingPlayer = true;
-        SetRandomTargetPosition();
+      
     }
 
     private void Update()
@@ -35,55 +30,7 @@ public class EnemyMovement : MonoBehaviour
             return;
         }
 
-        if (isFollowingPlayer)
-        {
-            targetPosition = player.position;
-        }
 
-        transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
-
-        if (Vector3.Distance(transform.position, targetPosition) < 0.1f)
-        {
-            if (!isFollowingPlayer)
-            {
-                if (timer >= changeDirectionTime)
-                {
-                    SetRandomTargetPosition();
-                    timer = 0f;
-                }
-                else
-                {
-                    timer += Time.deltaTime;
-                }
-            }
-        }
-    }
-
-    private void SetRandomTargetPosition()
-    {
-        float randomX = Random.Range(-5f, 5f);
-        float randomY = Random.Range(-5f, 5f);
-        targetPosition = new Vector3(randomX, randomY, transform.position.z);
-    }
-
-    public void StartFollowingPlayer()
-    {
-        if (spriteRenderer.sprite == firstSprite)
-        {
-            isFollowingPlayer = true;
-        }
-    }
-
-    public void StopFollowingPlayer()
-    {
-        isFollowingPlayer = false;
-        SetRandomTargetPosition();
-    }
-
-    public void ChangeToSecondSprite()
-    {
-        spriteRenderer.sprite = secondSprite;
-        StopFollowingPlayer();
     }
 
     public void FreezeEnemy()
@@ -103,7 +50,12 @@ public class EnemyMovement : MonoBehaviour
     {
         isFrozen = false;
         spriteRenderer.sprite = firstSprite;
-        SetRandomTargetPosition();
+
+    }
+
+    public void ChangeToSecondSprite()
+    {
+        spriteRenderer.sprite = secondSprite;
     }
 
     void OnCollisionEnter2D(Collision2D collision)

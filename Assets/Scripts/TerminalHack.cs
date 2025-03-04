@@ -70,7 +70,7 @@ public class TerminalHack : MonoBehaviour
         isHackingInProgress = false;
         isEnemyFrozen = true; 
         enemy.GetComponent<SpriteRenderer>().sprite = hackedSprite; 
-        enemy.GetComponent<EnemyMovement>().FreezeEnemy(); 
+        enemy.GetComponent<EnemyPatrol>().FreezeEnemy(); 
         freezeTimer = 0f; 
         Debug.Log("Terminal Hacked! Enemy frozen for 5 seconds.");
     }
@@ -80,7 +80,7 @@ public class TerminalHack : MonoBehaviour
     {
         isEnemyFrozen = false;
         enemy.GetComponent<SpriteRenderer>().sprite = originalSprite; 
-        enemy.GetComponent<EnemyMovement>().UnfreezeEnemy(); 
+        enemy.GetComponent<EnemyPatrol>().UnfreezeEnemy(); 
         freezeTimer = 0f; 
         Debug.Log("Enemy restored.");
     }

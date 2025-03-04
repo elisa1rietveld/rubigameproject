@@ -12,7 +12,7 @@ public class Kogel : MonoBehaviour
         target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         target.z = 0;
 
-        // Log the initial target position for the bullet
+        
         Debug.Log("Bullet target position set to: " + target);
     }
 
@@ -40,7 +40,7 @@ public class Kogel : MonoBehaviour
 
             Debug.Log("Bullet hit the enemy!");
 
-            EnemyMovement enemy = collision.gameObject.GetComponent<EnemyMovement>();
+            EnemyPatrol enemy = collision.gameObject.GetComponent<EnemyPatrol>();
             if (enemy != null)
             {
 
