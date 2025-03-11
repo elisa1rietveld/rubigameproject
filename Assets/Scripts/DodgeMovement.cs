@@ -8,11 +8,13 @@ public class DodgeMovement : MonoBehaviour
     public float dodgeTime = 0.5f; // duration of the dodge
     public float dodgeCooldown = 1f; // cooldown between dodges
     public bool isInvulnerableDuringDodge = true; // is the player invulnerable during the dodge
+    
 
     private Rigidbody2D rb;
     private bool isDodging = false;
     private float dodgeCooldownTimer = 0f;
     private Vector2 dodgeDirection;
+
 
     // Start is called before the first frame update
     void Start()
@@ -29,56 +31,62 @@ public class DodgeMovement : MonoBehaviour
             dodgeCooldownTimer -= Time.deltaTime;
         }
 
-    // check of the speler is dodging
-    if (Input.GetKeyDown(KeyCode.Q))
+        // check if the player is pressing Q (left dodge) or E (right dodge)
+        if (!isDodging && dodgeCooldownTimer <= 0)
         {
-            TryDodge();
-            Debug.Log("Dodge");
-        }
-    }
-
-    void FixedUpdate()
-    {
-        if (isDodging)
-        {
-            rb.velocity = dodgeDirection * dodgeSpeed;
+            if (Input.GetKeyDown(KeyCode.Q)) // Dodge naar links
+            {
+                dodgeDirection = Vector2.left; // set dodge direction to left
+                TryDodge();
+                Debug.Log("Dodge naar links");
+            }
+            else if (Input.GetKeyDown(KeyCode.Z)) // Dodge naar rechts
+            {
+                dodgeDirection = Vector2.right; // set dodge direction to right
+                TryDodge();
+                Debug.Log("Dodge naar rechts");
+            }
         }
     }
 
     void TryDodge()
     {
-        if (dodgeCooldownTimer <= 0 && !isDodging)
-        {
-           float horizontal = Input.GetAxis("Horizontal");
-            float vertical = Input.GetAxis("Vertical");
-
-            if (horizontal != 0 || vertical != 0)
-            {
-                dodgeDirection = new Vector2(horizontal, vertical).normalized;
-                StartCoroutine(PerformDodge());
-            }
-        }
+        StartCoroutine(PerformDodge()); // start the dodge coroutine
     }
-    System.Collections.IEnumerator PerformDodge()
+    IEnumerator PerformDodge()
     {
         isDodging = true;
         dodgeCooldownTimer = dodgeCooldown;
+
         if (isInvulnerableDuringDodge)
         {
-            GetComponent<Collider2D>().enabled = false; // disable the collider
+            GetComponent<BoxCollider2D>().enabled = false; // disable the collider
         }
-        // wait for the dodge time
-        yield return new WaitForSeconds(dodgeTime);
+        
+        float dodgeDistance = dodgeSpeed * dodgeTime; // calculate the distance of the dodge
+        Vector2 startPosition = rb.position; // get the start position of the dodge
+        Vector2 targetPosition = startPosition + dodgeDirection * dodgeDistance; // calculate the target position of the dodge
 
-        // stop dodging
-        isDodging = false;
-        rb.velocity = Vector2.zero; // stop moving
+        float elapsedTime = 0f; // set the elapsed time to 0
+        
+        while (elapsedTime < dodgeTime) // while the elapsed time is less than the dodge time
+        {
+            rb.position = Vector2.Lerp(startPosition, targetPosition, elapsedTime / dodgeTime); // move the player to the target position
+            elapsedTime += Time.deltaTime; // increment the elapsed time
+            yield return null; // wait for the next frame
+        }
+
+        rb.position = targetPosition; // set the player to the target position
+
+        isDodging = false; // set the player to not dodging
 
         //reset the collider(if it was disabled)
         if (isInvulnerableDuringDodge)
         {
-            GetComponent<Collider2D>().enabled = true;
+            GetComponent<BoxCollider2D>().enabled = true;
         }
+
+        Debug.Log("Dodge ended. Dodged distance: " + " in direction: " + dodgeDirection);
 
     }
 }
