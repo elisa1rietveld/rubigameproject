@@ -1,15 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class DodgeMovement : MonoBehaviour
 {
-    public float dodgeSpeed = 5f; //speed of the dodge
-    public float dodgeTime = 0.5f; // duration of the dodge
-    public float dodgeCooldown = 1f; // cooldown between dodges
+    private float dodgeSpeed = 5f; //speed of the dodge
+    private float dodgeTime = 0.5f; // duration of the dodge
+    private float dodgeCooldown = 5f; // cooldown between dodges
     public bool isInvulnerableDuringDodge = true; // is the player invulnerable during the dodge
-    
 
+    public TextMeshProUGUI cooldownText;
     private Rigidbody2D rb;
     private bool isDodging = false;
     private float dodgeCooldownTimer = 0f;
@@ -20,6 +21,10 @@ public class DodgeMovement : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>(); //find the rigidbody2d component.
+        if (cooldownText != null)
+        {
+            cooldownText.gameObject.SetActive(false);
+        }
     }
 
     // Update is called once per frame
@@ -29,8 +34,20 @@ public class DodgeMovement : MonoBehaviour
         if (dodgeCooldownTimer > 0)
         {
             dodgeCooldownTimer -= Time.deltaTime;
+       
+        if (cooldownText != null)
+        {
+            cooldownText.gameObject.SetActive(true);
+            cooldownText.text = "Cooldown: " + Mathf.Ceil(dodgeCooldownTimer).ToString() + "S";
         }
-
+    }
+    else
+    {
+            if (cooldownText != null)
+            {
+                cooldownText.gameObject.SetActive(false);
+            }
+        }
         // check if the player is pressing Q (left dodge) or E (right dodge)
         if (!isDodging && dodgeCooldownTimer <= 0)
         {
