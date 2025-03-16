@@ -5,14 +5,10 @@ using UnityEngine;
 public class EnemyMovement : MonoBehaviour
 {
     public float moveSpeed = 2f;
-    public float changeDirectionTime = 2f;
     public Transform player;
     public Sprite firstSprite;
     public Sprite secondSprite;
 
-    private Vector3 targetPosition;
-    private float timer;
-    private bool isFollowingPlayer = false;
     private SpriteRenderer spriteRenderer;
     private bool isFrozen = false;
 
@@ -24,83 +20,25 @@ public class EnemyMovement : MonoBehaviour
         }
 
         spriteRenderer = GetComponent<SpriteRenderer>();
-
-        isFollowingPlayer = true; // Force follow mode for debugging
-        SetRandomTargetPosition();
+      
     }
-
 
     private void Update()
     {
         if (isFrozen)
         {
-            Debug.Log("Enemy is frozen, skipping movement.");
             return;
         }
 
-        if (isFollowingPlayer)
-        {
-            Debug.Log("Enemy is following player: " + player.position);
-        }
 
-        transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
-
-
-        if (Vector3.Distance(transform.position, targetPosition) < 0.1f)
-        {
-            if (!isFollowingPlayer)
-            {
-                if (timer >= changeDirectionTime)
-                {
-                    SetRandomTargetPosition();
-                    timer = 0f;
-                }
-                else
-                {
-                    timer += Time.deltaTime;
-                }
-            }
-        }
-    }
-
-    private void SetRandomTargetPosition()
-    {
-        float randomX = Random.Range(-5f, 5f);
-        float randomY = Random.Range(-5f, 5f);
-
-        targetPosition = new Vector3(randomX, randomY, transform.position.z);
-    }
-
-    public void StartFollowingPlayer()
-    {
-        if (spriteRenderer.sprite == firstSprite)
-        {
-            isFollowingPlayer = true;
-        }
-    }
-
-    public void StopFollowingPlayer()
-    {
-        isFollowingPlayer = false;
-        SetRandomTargetPosition();
-    }
-
-    public void ChangeToSecondSprite()
-    {
-        spriteRenderer.sprite = secondSprite;
-        StopFollowingPlayer();
     }
 
     public void FreezeEnemy()
     {
-        // Log to see if it's being called
-        Debug.Log("FreezeEnemy method called!");
-
         isFrozen = true;
-        ChangeToSecondSprite();  // Assumes this method is to change sprite or freeze visual
-        StartCoroutine(UnfreezeAfterDelay(3f));  // Optional: unfreeze after some time
+        ChangeToSecondSprite();
+        StartCoroutine(UnfreezeAfterDelay(3f));
     }
-
 
     private IEnumerator UnfreezeAfterDelay(float freezeTime)
     {
@@ -112,36 +50,25 @@ public class EnemyMovement : MonoBehaviour
     {
         isFrozen = false;
         spriteRenderer.sprite = firstSprite;
-        SetRandomTargetPosition();
+
+    }
+
+    public void ChangeToSecondSprite()
+    {
+        spriteRenderer.sprite = secondSprite;
     }
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        // Log the object the bullet collided with
-        Debug.Log("Bullet collided with: " + collision.gameObject.name);
-
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            // Log when the bullet hits an enemy
-            Debug.Log("Bullet hit the enemy!");
-
-            // Try to get the enemy's movement script and call FreezeEnemy
             EnemyMovement enemy = collision.gameObject.GetComponent<EnemyMovement>();
             if (enemy != null)
             {
-                Debug.Log("Freezing enemy...");
-                enemy.FreezeEnemy();  // Freeze the enemy
-            }
-            else
-            {
-                // Log an error if the enemy does not have the EnemyMovement script
-                Debug.LogError("EnemyMovement script not found on the enemy!");
+                enemy.FreezeEnemy();
             }
 
-            // Destroy the bullet after it hits the enemy
             Destroy(gameObject);
         }
     }
-
 }
-

@@ -103,6 +103,7 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+
 --- !u!1101 &-1762726979127142832
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -194,6 +195,7 @@ AnimatorState:
   m_Transitions:
   - {fileID: -3661776407900261812}
   - {fileID: 3954777924013468337}
+
   m_StateMachineBehaviours: []
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0

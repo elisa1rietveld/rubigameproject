@@ -4,41 +4,38 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float speed;              // Movement speed
+    public float speed;               
+    public float crouchSpeedMultiplier = 0.5f; 
     private Rigidbody2D rb;
-    public Animator animator;        // Animator for animations
-    public SpriteRenderer spriteRenderer; // Sprite renderer to flip character
+    public Animator animator;        
+    public SpriteRenderer spriteRenderer; 
 
-    // Movement direction
     private Vector2 moveDirection;
+    private bool isCrouching = false;  
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>(); // Get Rigidbody2D component
-        spriteRenderer = GetComponent<SpriteRenderer>(); // Get SpriteRenderer
+        rb = GetComponent<Rigidbody2D>(); 
+        spriteRenderer = GetComponent<SpriteRenderer>(); 
     }
 
     void Update()
     {
-        // Input for movement
         float moveHorizontal = Input.GetAxisRaw("Horizontal");
         float moveVertical = Input.GetAxisRaw("Vertical");
 
-        // Check if the player is providing input and normalize the movement direction
         if (moveHorizontal != 0 || moveVertical != 0)
         {
             moveDirection = new Vector2(moveHorizontal, moveVertical).normalized;
         }
         else
         {
-            moveDirection = Vector2.zero; // No movement if no input
+            moveDirection = Vector2.zero; 
         }
 
-        // Handle animation based on movement
         float movementSpeed = moveDirection.magnitude;
         animator.SetFloat("Speed", movementSpeed);
 
-        // Flip character based on movement direction
         if (moveHorizontal > 0)
         {
             spriteRenderer.flipX = false;
@@ -48,7 +45,6 @@ public class PlayerMovement : MonoBehaviour
             spriteRenderer.flipX = true;
         }
 
-        // Handle jumping animation
         if (Input.GetKeyDown(KeyCode.Space))
         {
             animator.SetBool("IsJumping", true);
@@ -58,7 +54,17 @@ public class PlayerMovement : MonoBehaviour
             animator.SetBool("IsJumping", false);
         }
 
-        // Apply movement within screen bounds
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            animator.SetBool("IsCrouching", true);
+            isCrouching = true;
+        }
+        else if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            animator.SetBool("IsCrouching", false);
+            isCrouching = false;
+        }
+
         Vector3 pos = transform.position;
         Vector3 screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
 
@@ -70,7 +76,7 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Apply velocity to the Rigidbody2D based on movement direction and speed
-        rb.velocity = moveDirection * speed;
+        float currentSpeed = isCrouching ? speed * crouchSpeedMultiplier : speed;
+        rb.velocity = moveDirection * currentSpeed;
     }
 }
