@@ -19,6 +19,8 @@ public class Vent : MonoBehaviour
 
         ventAnimator = GetComponentInChildren<Animator>();
         player = GameObject.FindGameObjectWithTag("Player");
+        mainCamera.enabled = true;
+        secondCamera.enabled = false;
 
     }
 
