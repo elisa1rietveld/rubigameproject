@@ -4,21 +4,25 @@ using UnityEngine;
 
 public class EnemyPatrol : MonoBehaviour
 {
-
     public float moveSpeed = 2f;
     public Transform player;
     public Sprite firstSprite;
     public Sprite secondSprite;
-    public Transform[] patrolPoints;
+    public Transform[] patrolPoints; 
     public float patrolSpeed = 90f;
     public float detectionRadius = 300f;
-    
+
     private int currentPatrolPointIndex;
     private SpriteRenderer spriteRenderer;
     private bool isFrozen = false;
     private bool isChasing;
     private bool playerIsHidden;
     private bool isWaiting;
+
+    private bool isHacked = false; 
+    private bool hasReachedTarget = false;
+
+    public Transform point3; // Reference to "Point 3"
 
     private void Start()
     {
@@ -34,8 +38,12 @@ public class EnemyPatrol : MonoBehaviour
 
     private void Update()
     {
-        if (isFrozen)
+        if (isFrozen || isHacked) 
         {
+            if (isHacked && !hasReachedTarget)
+            {
+                MoveToPoint3(); // Move to "Point 3" after hack
+            }
             return;
         }
 
@@ -69,6 +77,19 @@ public class EnemyPatrol : MonoBehaviour
         }
     }
 
+    void MoveToPoint3()
+    {
+        if (point3 != null) // Ensure Point 3 is assigned
+        {
+            transform.position = Vector2.MoveTowards(transform.position, point3.position, patrolSpeed * Time.deltaTime);
+
+            if (Vector2.Distance(transform.position, point3.position) < 0.1f)
+            {
+                hasReachedTarget = true; // Stop once Point 3 is reached
+            }
+        }
+    }
+
     void Patrol()
     {
         if (Vector2.Distance(transform.position, patrolPoints[currentPatrolPointIndex].position) < 0.1f)
@@ -79,6 +100,17 @@ public class EnemyPatrol : MonoBehaviour
         {
             transform.position = Vector2.MoveTowards(transform.position, patrolPoints[currentPatrolPointIndex].position, patrolSpeed * Time.deltaTime);
         }
+    }
+
+    public void StopFollowingPlayer()
+    {
+        isChasing = false;
+    }
+
+    public void HackEnemy()
+    {
+        isHacked = true;
+        StopFollowingPlayer(); 
     }
 
     IEnumerator WaitAtWaypoint()
@@ -132,26 +164,12 @@ public class EnemyPatrol : MonoBehaviour
         }
     }
 
-    // Control visibility of player for chasing logic
     public void SetPlayerHidden(bool hidden)
     {
         playerIsHidden = hidden;
         if (hidden)
         {
             isChasing = false;
-        }
-    }
-
-    public void StopFollowingPlayer()
-    {
-        isChasing = false;
-    }
-
-    public void StartFollowingPlayer()
-    {
-        if (!playerIsHidden)
-        {
-            isChasing = true;
         }
     }
 

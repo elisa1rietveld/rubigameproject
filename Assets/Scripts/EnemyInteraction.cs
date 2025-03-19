@@ -5,37 +5,31 @@ using System.Collections;
 public class EnemyInteraction : MonoBehaviour
 {
     public Slider slider;
-    public Sprite badEnemySprite;
-    public Sprite changedEnemySprite;
-    private SpriteRenderer enemyRenderer;
     private bool isInteracting = false;
     public float interactionRange = 2f;
     private bool playerInRange = false;
+    private bool hasHacked = false;
     private EnemyMovement enemyMovement;
     private Animator enemyAnimator;
 
     void Start()
     {
-        enemyRenderer = GetComponent<SpriteRenderer>();
         enemyMovement = GetComponent<EnemyMovement>();
         enemyAnimator = GetComponent<Animator>();
 
-        if (enemyRenderer == null)
+        if (enemyAnimator == null)
         {
-            Debug.LogError("No SpriteRenderer found on the enemy GameObject!");
+            Debug.LogError("No Animator found on the enemy GameObject!");
             return;
         }
-
-        enemyRenderer.sprite = badEnemySprite;
     }
 
     void Update()
     {
-        if (playerInRange && !isInteracting)
+        if (!hasHacked && playerInRange && !isInteracting)
         {
             if (Input.GetKeyDown(KeyCode.E))
             {
-                enemyAnimator.SetTrigger("IsInteracting");
                 StartCoroutine(StartSliderInteraction());
             }
         }
@@ -43,28 +37,38 @@ public class EnemyInteraction : MonoBehaviour
 
     IEnumerator StartSliderInteraction()
     {
-        slider.gameObject.SetActive(true);
+        slider.gameObject.SetActive(true); 
         slider.value = 0;
         isInteracting = true;
 
         float timePassed = 0;
-        while (timePassed < 5f)
+        while (timePassed < 5f) 
         {
             timePassed += Time.deltaTime;
-            slider.value = timePassed / 5f;
+            slider.value = timePassed / 5f; 
             yield return null;
         }
 
-        enemyRenderer.sprite = changedEnemySprite;
-        slider.gameObject.SetActive(false);
+        // Trigger the ConvertWalking animation after the hacking process finishes
+        enemyAnimator.SetTrigger("ConvertWalking");
+
+        slider.gameObject.SetActive(false); 
         isInteracting = false;
+        hasHacked = true;
+
+        // You can perform other post-hack actions like notifying the enemy's patrol to stop
+        EnemyPatrol enemyPatrol = GetComponent<EnemyPatrol>();
+        if (enemyPatrol != null)
+        {
+            enemyPatrol.HackEnemy();
+        }
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
-            playerInRange = true;
+            playerInRange = true; 
         }
     }
 
@@ -72,7 +76,19 @@ public class EnemyInteraction : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            playerInRange = false;
+            playerInRange = false; 
         }
+    }
+
+    // This method can be called to trigger the freeze animation when the enemy is frozen
+    public void FreezeEnemy()
+    {
+        enemyAnimator.SetBool("IsFrozen", true);  // Assuming you have a frozen animation in the Animator
+    }
+
+    // This method will be called to unfreeze the enemy and revert its animation
+    public void UnfreezeEnemy()
+    {
+        enemyAnimator.SetBool("IsFrozen", false); // Reverts to normal animation after unfreeze
     }
 }

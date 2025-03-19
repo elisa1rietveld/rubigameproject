@@ -12,19 +12,24 @@ public class TerminalHack : MonoBehaviour
     public GameObject enemy; 
     public Sprite hackedSprite; 
     public Sprite originalSprite; 
+    public Sprite terminalHackedSprite; // New sprite for the terminal
     public float hackRange = 2f; 
     private Transform player; 
     private bool isEnemyFrozen = false; 
     private float freezeTimer = 0f; 
+    private bool isHacked = false; // Flag to check if already hacked
+
+    private SpriteRenderer terminalSpriteRenderer; // Reference to the terminal's SpriteRenderer
 
     void Start()
     {
         player = GameObject.FindWithTag("Player").transform;
+        terminalSpriteRenderer = GetComponent<SpriteRenderer>(); // Get the SpriteRenderer of the terminal
     }
 
     void Update()
     {
-        if (isHackingInProgress)
+        if (isHackingInProgress && !isHacked) // Only allow hacking if it's not already hacked
         {
             hackProgress += Time.deltaTime / 5f; 
             hackSlider.value = hackProgress;
@@ -45,7 +50,7 @@ public class TerminalHack : MonoBehaviour
             }
         }
 
-        if (Vector3.Distance(player.position, transform.position) <= hackRange && !isHackingInProgress)
+        if (Vector3.Distance(player.position, transform.position) <= hackRange && !isHacked) // Prevent hacking if already hacked
         {
             if (Input.GetKeyDown(KeyCode.E)) 
             {
@@ -54,7 +59,6 @@ public class TerminalHack : MonoBehaviour
         }
     }
 
-    
     void StartHack()
     {
         isHackingInProgress = true;
@@ -62,7 +66,6 @@ public class TerminalHack : MonoBehaviour
         hackProgress = 0f; 
     }
 
-    
     void CompleteHack()
     {
         hackSlider.gameObject.SetActive(false); 
@@ -72,10 +75,17 @@ public class TerminalHack : MonoBehaviour
         enemy.GetComponent<SpriteRenderer>().sprite = hackedSprite; 
         enemy.GetComponent<EnemyPatrol>().FreezeEnemy(); 
         freezeTimer = 0f; 
+        isHacked = true; // Set the flag to prevent future hacks
+        
+        // Change the terminal sprite to indicate it's hacked
+        if (terminalSpriteRenderer != null) 
+        {
+            terminalSpriteRenderer.sprite = terminalHackedSprite;
+        }
+        
         Debug.Log("Terminal Hacked! Enemy frozen for 5 seconds.");
     }
 
-   
     void RestoreEnemy()
     {
         isEnemyFrozen = false;
