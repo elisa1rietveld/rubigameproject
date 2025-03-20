@@ -12,6 +12,7 @@ public class UIUpgradeMenu : MonoBehaviour
     public Button speedButton;
     public Button armorButton;
     public TMP_Text maxedOutText; // TMP text that will appear and fade out
+    public TMP_Text notEnoughPointsText; // TMP text for insufficient points
 
     private PlayerUpgradeSystem playerUpgradeSystem;
 
@@ -26,6 +27,7 @@ public class UIUpgradeMenu : MonoBehaviour
 
         upgradeMenu.SetActive(false);
         maxedOutText.gameObject.SetActive(false);
+        notEnoughPointsText.gameObject.SetActive(false);
 
         // Setup button listeners
         healthButton.onClick.RemoveAllListeners();
@@ -65,31 +67,45 @@ public class UIUpgradeMenu : MonoBehaviour
         if (playerUpgradeSystem != null)
         {
             bool maxedOut = false;
-            switch (type)
+            bool notEnoughPoints = false;
+
+            // Check if the player has enough points and if the upgrade isn't maxed out
+            if (playerUpgradeSystem.hackPoints < 1) // Check if the player has enough points
             {
-                case PlayerUpgradeSystem.UpgradeType.Health:
-                    if (playerUpgradeSystem.playerHealth < 150f)
-                        playerUpgradeSystem.Upgrade(type);
-                    else
-                        maxedOut = true;
-                    break;
-                case PlayerUpgradeSystem.UpgradeType.Speed:
-                    if (playerUpgradeSystem.playerSpeed < 7f)
-                        playerUpgradeSystem.Upgrade(type);
-                    else
-                        maxedOut = true;
-                    break;
-                case PlayerUpgradeSystem.UpgradeType.Armor:
-                    if (playerUpgradeSystem.playerArmor < 50f)
-                        playerUpgradeSystem.Upgrade(type);
-                    else
-                        maxedOut = true;
-                    break;
+                notEnoughPoints = true;
+            }
+            else
+            {
+                switch (type)
+                {
+                    case PlayerUpgradeSystem.UpgradeType.Health:
+                        if (playerUpgradeSystem.playerHealth < 150f)
+                            playerUpgradeSystem.Upgrade(type);
+                        else
+                            maxedOut = true;
+                        break;
+                    case PlayerUpgradeSystem.UpgradeType.Speed:
+                        if (playerUpgradeSystem.playerSpeed < 7f)
+                            playerUpgradeSystem.Upgrade(type);
+                        else
+                            maxedOut = true;
+                        break;
+                    case PlayerUpgradeSystem.UpgradeType.Armor:
+                        if (playerUpgradeSystem.playerArmor < 50f)
+                            playerUpgradeSystem.Upgrade(type);
+                        else
+                            maxedOut = true;
+                        break;
+                }
             }
 
             if (maxedOut)
             {
                 StartCoroutine(ShowMaxedOutMessage());
+            }
+            else if (notEnoughPoints)
+            {
+                StartCoroutine(ShowNotEnoughPointsMessage());
             }
 
             UpdateUI();
@@ -100,22 +116,50 @@ public class UIUpgradeMenu : MonoBehaviour
     {
         maxedOutText.gameObject.SetActive(true);
         maxedOutText.alpha = 1f;
-
-        yield return new WaitForSeconds(.5f);
+        maxedOutText.transform.localPosition = new Vector3(maxedOutText.transform.localPosition.x, -300f, maxedOutText.transform.localPosition.z); // Start lower by 300 units
 
         float fadeDuration = 1f;
-        float startAlpha = 1f;
         float timer = 0f;
 
+        // Animate the fade and position drop
         while (timer < fadeDuration)
         {
             timer += Time.deltaTime;
-            float alpha = Mathf.Lerp(startAlpha, 0f, timer / fadeDuration);
+            float alpha = Mathf.Lerp(1f, 0f, timer / fadeDuration);
+            float dropAmount = Mathf.Lerp(0f, -20f, timer / fadeDuration); // Drop text by 20 units
+
             maxedOutText.alpha = alpha;
+            maxedOutText.transform.localPosition = new Vector3(maxedOutText.transform.localPosition.x, -300f + dropAmount, maxedOutText.transform.localPosition.z); // Apply offset
+
             yield return null;
         }
 
         maxedOutText.gameObject.SetActive(false);
+    }
+
+    private IEnumerator ShowNotEnoughPointsMessage()
+    {
+        notEnoughPointsText.gameObject.SetActive(true);
+        notEnoughPointsText.alpha = 1f;
+        notEnoughPointsText.transform.localPosition = new Vector3(notEnoughPointsText.transform.localPosition.x, -300f, notEnoughPointsText.transform.localPosition.z); // Start lower by 300 units
+
+        float fadeDuration = 1f;
+        float timer = 0f;
+
+        // Animate the fade and position drop
+        while (timer < fadeDuration)
+        {
+            timer += Time.deltaTime;
+            float alpha = Mathf.Lerp(1f, 0f, timer / fadeDuration);
+            float dropAmount = Mathf.Lerp(0f, -20f, timer / fadeDuration); // Drop text by 20 units
+
+            notEnoughPointsText.alpha = alpha;
+            notEnoughPointsText.transform.localPosition = new Vector3(notEnoughPointsText.transform.localPosition.x, -300f + dropAmount, notEnoughPointsText.transform.localPosition.z); // Apply offset
+
+            yield return null;
+        }
+
+        notEnoughPointsText.gameObject.SetActive(false);
     }
 
     private void UpdateUI()
