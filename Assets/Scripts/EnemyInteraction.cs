@@ -14,6 +14,8 @@ public class EnemyInteraction : MonoBehaviour
     private EnemyMovement enemyMovement;
     private Animator enemyAnimator;
 
+    private PlayerUpgradeSystem playerUpgradeSystem;
+
     void Start()
     {
         enemyRenderer = GetComponent<SpriteRenderer>();
@@ -27,6 +29,17 @@ public class EnemyInteraction : MonoBehaviour
         }
 
         enemyRenderer.sprite = badEnemySprite;
+
+        // Find the PlayerUpgradeSystem properly
+        GameObject player = GameObject.FindWithTag("Player");
+        if (player != null)
+        {
+            playerUpgradeSystem = player.GetComponent<PlayerUpgradeSystem>();
+        }
+        else
+        {
+            Debug.LogError("PlayerUpgradeSystem not found! Ensure the Player has a 'Player' tag.");
+        }
     }
 
     void Update()
@@ -58,6 +71,8 @@ public class EnemyInteraction : MonoBehaviour
         enemyRenderer.sprite = changedEnemySprite;
         slider.gameObject.SetActive(false);
         isInteracting = false;
+
+        HackedEnemy(); // Call HackedEnemy() after hacking is complete
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -73,6 +88,18 @@ public class EnemyInteraction : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerInRange = false;
+        }
+    }
+
+    void HackedEnemy()
+    {
+        if (playerUpgradeSystem != null)
+        {
+            playerUpgradeSystem.AddHackPoint();
+        }
+        else
+        {
+            Debug.LogError("PlayerUpgradeSystem is null! Cannot add hack points.");
         }
     }
 }
