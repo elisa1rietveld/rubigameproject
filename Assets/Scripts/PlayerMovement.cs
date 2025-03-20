@@ -65,6 +65,11 @@ public class PlayerMovement : MonoBehaviour
             isCrouching = false;
         }
 
+        if (Input.GetKeyDown(KeyCode.E)) // Detect 'E' key press
+        {
+            animator.SetTrigger("IsInteracting"); // Trigger the interaction animation
+        }
+
         Vector3 pos = transform.position;
         Vector3 screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
 
