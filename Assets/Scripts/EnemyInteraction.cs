@@ -5,12 +5,15 @@ using System.Collections;
 public class EnemyInteraction : MonoBehaviour
 {
     public Slider slider;
+    public Sprite badEnemySprite;
+    public Sprite changedEnemySprite;
+    private SpriteRenderer enemyRenderer;
     private bool isInteracting = false;
     public float interactionRange = 2f;
     private bool playerInRange = false;
-    private bool hasHacked = false;
     private EnemyMovement enemyMovement;
     private Animator enemyAnimator;
+    private bool hasHacked = false;
 
     private PlayerUpgradeSystem playerUpgradeSystem;
 
@@ -24,7 +27,6 @@ public class EnemyInteraction : MonoBehaviour
             Debug.LogError("No Animator found on the enemy GameObject!");
             return;
         }
-<<<<<<< HEAD
 
         enemyRenderer.sprite = badEnemySprite;
 
@@ -38,8 +40,6 @@ public class EnemyInteraction : MonoBehaviour
         {
             Debug.LogError("PlayerUpgradeSystem not found! Ensure the Player has a 'Player' tag.");
         }
-=======
->>>>>>> 7c3b9fb770a2a16b7fbbc8b41b6da16941cabbdd
     }
 
     void Update()
@@ -72,19 +72,18 @@ public class EnemyInteraction : MonoBehaviour
 
         slider.gameObject.SetActive(false); 
         isInteracting = false;
-<<<<<<< HEAD
-
-        HackedEnemy(); // Call HackedEnemy() after hacking is complete
-=======
         hasHacked = true;
 
+    
+
+        HackedEnemy(); // Call HackedEnemy() after hacking is complete
+        
         // You can perform other post-hack actions like notifying the enemy's patrol to stop
         EnemyPatrol enemyPatrol = GetComponent<EnemyPatrol>();
         if (enemyPatrol != null)
         {
             enemyPatrol.HackEnemy();
         }
->>>>>>> 7c3b9fb770a2a16b7fbbc8b41b6da16941cabbdd
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -103,7 +102,7 @@ public class EnemyInteraction : MonoBehaviour
         }
     }
 
-<<<<<<< HEAD
+
     void HackedEnemy()
     {
         if (playerUpgradeSystem != null)
@@ -114,7 +113,9 @@ public class EnemyInteraction : MonoBehaviour
         {
             Debug.LogError("PlayerUpgradeSystem is null! Cannot add hack points.");
         }
-=======
+    }
+
+
     // This method can be called to trigger the freeze animation when the enemy is frozen
     public void FreezeEnemy()
     {
@@ -125,7 +126,6 @@ public class EnemyInteraction : MonoBehaviour
     public void UnfreezeEnemy()
     {
         enemyAnimator.SetBool("IsFrozen", false); // Reverts to normal animation after unfreeze
->>>>>>> 7c3b9fb770a2a16b7fbbc8b41b6da16941cabbdd
+
     }
-}
 }
