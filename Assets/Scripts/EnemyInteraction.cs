@@ -28,7 +28,7 @@ public class EnemyInteraction : MonoBehaviour
             return;
         }
 
-        enemyRenderer.sprite = badEnemySprite;
+    
 
         // Find the PlayerUpgradeSystem properly
         GameObject player = GameObject.FindWithTag("Player");
