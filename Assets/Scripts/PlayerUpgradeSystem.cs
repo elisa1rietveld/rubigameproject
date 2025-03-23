@@ -35,7 +35,6 @@ public class PlayerUpgradeSystem : MonoBehaviour
     {
         if (hackPoints < upgradeCost)
         {
-            Debug.Log("Not enough hack points to upgrade.");
             return;
         }
 
@@ -59,15 +58,11 @@ public class PlayerUpgradeSystem : MonoBehaviour
 
     private void UpdateUI()
     {
-        if (pointsText == null || healthText == null || speedText == null || armorText == null)
-        {
-            Debug.LogError("TMP Text elements not assigned in the Inspector!");
-            return;
-        }
+        if (!pointsText || !healthText || !speedText || !armorText) return;
 
-        pointsText.text = "Hack Points: " + hackPoints;
-        healthText.text = "Health: " + playerHealth;
-        speedText.text = "Speed: " + playerSpeed;
-        armorText.text = "Armor: " + playerArmor;
+        pointsText.SetText($"Hack Points: {hackPoints}");
+        healthText.SetText($"Health: {playerHealth}");
+        speedText.SetText($"Speed: {playerSpeed}");
+        armorText.SetText($"Armor: {playerArmor}");
     }
 }
