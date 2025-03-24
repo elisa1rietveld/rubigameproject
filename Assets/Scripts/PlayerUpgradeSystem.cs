@@ -12,6 +12,10 @@ public class PlayerUpgradeSystem : MonoBehaviour
     public float playerSpeed = 5f;
     public float playerArmor = 0f;
 
+    public float maxHealth = 150f;
+    public float maxSpeed = 7f;
+    public float maxArmor = 50f;
+
     public TMP_Text pointsText;
     public TMP_Text healthText;
     public TMP_Text speedText;
@@ -22,6 +26,7 @@ public class PlayerUpgradeSystem : MonoBehaviour
     void Start()
     {
         playerMovement = GetComponent<PlayerMovement>();
+        playerMovement.speed = playerSpeed; // make sure it's synced at start
         UpdateUI();
     }
 
@@ -41,14 +46,14 @@ public class PlayerUpgradeSystem : MonoBehaviour
         switch (type)
         {
             case UpgradeType.Health:
-                playerHealth += 20f;
+                playerHealth = Mathf.Min(playerHealth + 20f, maxHealth);
                 break;
             case UpgradeType.Speed:
-                playerSpeed += 1f;
-                playerMovement.speed = playerSpeed;
+                playerSpeed = Mathf.Min(playerSpeed + 1f, maxSpeed);
+                playerMovement.speed = playerSpeed; // keep movement synced
                 break;
             case UpgradeType.Armor:
-                playerArmor += 5f;
+                playerArmor = Mathf.Min(playerArmor + 5f, maxArmor);
                 break;
         }
 
@@ -61,8 +66,8 @@ public class PlayerUpgradeSystem : MonoBehaviour
         if (!pointsText || !healthText || !speedText || !armorText) return;
 
         pointsText.SetText($"Hack Points: {hackPoints}");
-        healthText.SetText($"Health: {playerHealth}");
-        speedText.SetText($"Speed: {playerSpeed}");
-        armorText.SetText($"Armor: {playerArmor}");
+        healthText.SetText($"Health: {playerHealth} / {maxHealth}");
+        speedText.SetText($"Speed: {playerSpeed} / {maxSpeed}");
+        armorText.SetText($"Armor: {playerArmor} / {maxArmor}");
     }
 }

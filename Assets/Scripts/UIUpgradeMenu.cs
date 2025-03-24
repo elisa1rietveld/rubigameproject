@@ -6,11 +6,17 @@ using System.Collections;
 public class UIUpgradeMenu : MonoBehaviour
 {
     public GameObject upgradeMenu;
-    public TMP_Text inGamePointsText;
+    public GameObject inGameUI;
     public TMP_Text menuPointsText;
+
     public Button healthButton;
     public Button speedButton;
     public Button armorButton;
+
+    public TMP_Text healthProgressText;
+    public TMP_Text speedProgressText;
+    public TMP_Text armorProgressText;
+
     public TMP_Text maxedOutText;
     public TMP_Text notEnoughPointsText;
 
@@ -32,9 +38,9 @@ public class UIUpgradeMenu : MonoBehaviour
         maxedOutStartPos = maxedOutText.rectTransform.localPosition;
         notEnoughStartPos = notEnoughPointsText.rectTransform.localPosition;
 
-        healthButton.onClick.AddListener(() => TryUpgrade(PlayerUpgradeSystem.UpgradeType.Health, 150f, ref maxedOutCoroutine));
-        speedButton.onClick.AddListener(() => TryUpgrade(PlayerUpgradeSystem.UpgradeType.Speed, 7f, ref maxedOutCoroutine));
-        armorButton.onClick.AddListener(() => TryUpgrade(PlayerUpgradeSystem.UpgradeType.Armor, 50f, ref maxedOutCoroutine));
+        healthButton.onClick.AddListener(() => TryUpgrade(PlayerUpgradeSystem.UpgradeType.Health, playerUpgradeSystem.maxHealth, ref maxedOutCoroutine));
+        speedButton.onClick.AddListener(() => TryUpgrade(PlayerUpgradeSystem.UpgradeType.Speed, playerUpgradeSystem.maxSpeed, ref maxedOutCoroutine));
+        armorButton.onClick.AddListener(() => TryUpgrade(PlayerUpgradeSystem.UpgradeType.Armor, playerUpgradeSystem.maxArmor, ref maxedOutCoroutine));
 
         UpdateUI();
     }
@@ -53,7 +59,11 @@ public class UIUpgradeMenu : MonoBehaviour
 
     private void ToggleUpgradeMenu()
     {
-        upgradeMenu.SetActive(!upgradeMenu.activeSelf);
+        bool isOpening = !upgradeMenu.activeSelf;
+        upgradeMenu.SetActive(isOpening);
+        if (inGameUI != null)
+            inGameUI.SetActive(!isOpening);
+
         UpdateUI();
     }
 
@@ -61,31 +71,32 @@ public class UIUpgradeMenu : MonoBehaviour
     {
         if (playerUpgradeSystem == null) return;
 
+        float currentValue = type switch
+        {
+            PlayerUpgradeSystem.UpgradeType.Health => playerUpgradeSystem.playerHealth,
+            PlayerUpgradeSystem.UpgradeType.Speed => playerUpgradeSystem.playerSpeed,
+            PlayerUpgradeSystem.UpgradeType.Armor => playerUpgradeSystem.playerArmor,
+            _ => 0f
+        };
+
+        if (currentValue >= maxValue)
+        {
+            ShowMessage(maxedOutText, ref maxedOutCoroutine, maxedOutStartPos);
+            return;
+        }
+
         if (playerUpgradeSystem.hackPoints < playerUpgradeSystem.upgradeCost)
         {
             ShowMessage(notEnoughPointsText, ref notEnoughCoroutine, notEnoughStartPos);
             return;
         }
 
-        float currentValue = type switch
-        {
-            PlayerUpgradeSystem.UpgradeType.Health => playerUpgradeSystem.playerHealth,
-            PlayerUpgradeSystem.UpgradeType.Speed => playerUpgradeSystem.playerSpeed,
-            PlayerUpgradeSystem.UpgradeType.Armor => playerUpgradeSystem.playerArmor,
-            _ => 0f // als geen van de verwachte typen overeenkomt, krijgt currentValue de waarde 0
-        };
-
-        if (currentValue < maxValue)
-            playerUpgradeSystem.Upgrade(type);
-        else
-            ShowMessage(maxedOutText, ref maxedOutCoroutine, maxedOutStartPos);
-
+        playerUpgradeSystem.Upgrade(type);
         UpdateUI();
     }
 
     private void ShowMessage(TMP_Text messageText, ref Coroutine messageCoroutine, Vector3 startPos)
     {
-        // reset positie voordat de animatie start
         messageText.rectTransform.localPosition = startPos;
 
         if (messageCoroutine != null)
@@ -99,25 +110,28 @@ public class UIUpgradeMenu : MonoBehaviour
         messageText.alpha = 1f;
 
         Vector3 endPos = startPos + new Vector3(0f, -20f, 0f);
-
         float duration = 1f;
+
         for (float t = 0; t < duration; t += Time.deltaTime)
         {
             float progress = t / duration;
-            messageText.alpha = Mathf.Lerp(1f, 0f, progress); // lerp zorgt ervoor dat hij soepeler gaat van a naar b
+            messageText.alpha = Mathf.Lerp(1f, 0f, progress);
             messageText.rectTransform.localPosition = Vector3.Lerp(startPos, endPos, progress);
             yield return null;
         }
 
         messageText.gameObject.SetActive(false);
-        messageText.rectTransform.localPosition = startPos; // terug naar startpositie
+        messageText.rectTransform.localPosition = startPos;
     }
 
     private void UpdateUI()
     {
         if (playerUpgradeSystem == null) return;
 
-        inGamePointsText.text = $"Hack Points: {playerUpgradeSystem.hackPoints}"; //string interpolation
         menuPointsText.text = $"Hack Points: {playerUpgradeSystem.hackPoints}";
+
+        healthProgressText.text = $"Health: {playerUpgradeSystem.playerHealth} / {playerUpgradeSystem.maxHealth}";
+        speedProgressText.text = $"Speed: {playerUpgradeSystem.playerSpeed} / {playerUpgradeSystem.maxSpeed}";
+        armorProgressText.text = $"Armor: {playerUpgradeSystem.playerArmor} / {playerUpgradeSystem.maxArmor}";
     }
 }
