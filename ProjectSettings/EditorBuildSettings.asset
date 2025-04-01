@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/RensScene.unity
     guid: 0b50d12814c9ced40be99871e56e1c39
+  - enabled: 1
+    path: Assets/Scenes/Options.unity
+    guid: 319b714987a6b704688b7cd3194ed51a
   m_configObjects: {}
