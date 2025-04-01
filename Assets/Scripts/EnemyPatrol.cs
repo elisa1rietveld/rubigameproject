@@ -14,6 +14,7 @@ public class EnemyPatrol : MonoBehaviour
 
     private int currentPatrolPointIndex;
     private SpriteRenderer spriteRenderer;
+    private Animator animator; 
     private bool isFrozen = false;
     private bool isChasing;
     private bool playerIsHidden;
@@ -22,7 +23,7 @@ public class EnemyPatrol : MonoBehaviour
     private bool isHacked = false; 
     private bool hasReachedTarget = false;
 
-    public Transform point3; // Reference to "Point 3"
+    public Transform point3; 
 
     private void Start()
     {
@@ -32,6 +33,7 @@ public class EnemyPatrol : MonoBehaviour
         }
 
         spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>(); 
         currentPatrolPointIndex = 0;
         transform.position = patrolPoints[currentPatrolPointIndex].position;
     }
@@ -42,7 +44,7 @@ public class EnemyPatrol : MonoBehaviour
         {
             if (isHacked && !hasReachedTarget)
             {
-                MoveToPoint3(); // Move to "Point 3" after hack
+                MoveToPoint3(); 
             }
             return;
         }
@@ -130,24 +132,26 @@ public class EnemyPatrol : MonoBehaviour
     {
         isFrozen = true;
         ChangeToSecondSprite();
-        StartCoroutine(UnfreezeAfterDelay(3f));
+        animator.enabled = false; 
+        StartCoroutine(UnfreezeAfterDelay(3f)); 
     }
 
     private IEnumerator UnfreezeAfterDelay(float freezeTime)
     {
         yield return new WaitForSeconds(freezeTime);
-        UnfreezeEnemy();
+        UnfreezeEnemy(); 
     }
 
     public void UnfreezeEnemy()
     {
         isFrozen = false;
-        spriteRenderer.sprite = firstSprite;
+        spriteRenderer.sprite = firstSprite; 
+        animator.enabled = true; 
     }
 
     public void ChangeToSecondSprite()
     {
-        spriteRenderer.sprite = secondSprite;
+        spriteRenderer.sprite = secondSprite; 
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -157,10 +161,10 @@ public class EnemyPatrol : MonoBehaviour
             EnemyPatrol enemy = collision.gameObject.GetComponent<EnemyPatrol>();
             if (enemy != null)
             {
-                enemy.FreezeEnemy();
+                enemy.FreezeEnemy(); 
             }
 
-            Destroy(gameObject);
+            Destroy(gameObject); 
         }
     }
 

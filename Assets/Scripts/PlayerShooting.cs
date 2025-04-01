@@ -23,10 +23,10 @@ public class PlayerShooting : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && Time.time - lastShootTime >= shootRate && currentBullets > 0)
-        {
-            ShootBullet();
-        }
+        if (Input.GetMouseButtonDown(1) && Time.time - lastShootTime >= shootRate && currentBullets > 0)
+{
+    ShootBullet();
+}
     }
 
     void ShootBullet()

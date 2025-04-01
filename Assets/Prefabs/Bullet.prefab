@@ -127,6 +127,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
+  newSprite: {fileID: -42367578683302009, guid: 73b4db2642f7fa54fa5687ed0da97867, type: 3}
 --- !u!58 &4112401638294344051
 CircleCollider2D:
   m_ObjectHideFlags: 0
