@@ -8,6 +8,10 @@ public class VentClick : MonoBehaviour
     private void Awake()
     {
         ventSystem = FindObjectOfType<VentSystem>();
+        if (ventSystem == null)
+        {
+            Debug.LogError("VentSystem not found in the scene.");
+        }
     }
 
     private void OnMouseDown()
