@@ -13,8 +13,8 @@ public class DialogueManager : MonoBehaviour
 
     void Start()
     {
-        dialogueBox.SetActive(false); // Hide the dialogue box initially
-        continueButton.onClick.AddListener(DisplayNextSentence);
+        dialogueBox.SetActive(false); // Hide dialogue box initially
+        // Removed AddListener — using Inspector instead
     }
 
     public void StartDialogue(DialogueData dialogueData)
@@ -30,7 +30,7 @@ public class DialogueManager : MonoBehaviour
         DisplayNextSentence();
     }
 
-    void DisplayNextSentence()
+    public void DisplayNextSentence() // Made public so you can call it from Inspector
     {
         if (dialogueQueue.Count == 0)
         {
