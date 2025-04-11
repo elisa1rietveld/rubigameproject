@@ -2191,7 +2191,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3b5daec17c560e419ccc8ccab8750a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isInvulnerableDuringDodge: 1
   cooldownText: {fileID: 555834316}
 --- !u!1 &703663812
 GameObject:
@@ -4809,7 +4808,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Press Q for left dodge or Z for right dodge
+  m_text: Press A for left dodge or D for right dodge
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7498877873410274cbafdd200b0a91ef, type: 2}
   m_sharedMaterial: {fileID: 8737995621030118217, guid: 7498877873410274cbafdd200b0a91ef, type: 2}
